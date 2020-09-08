@@ -24,10 +24,10 @@ public class MainActivity extends AppCompatActivity implements CameraXConfig.Pro
 
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private PreviewView previewView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CameraX.initialize(this,);
         setContentView(R.layout.activity_main);
         previewView=findViewById(R.id.previewView);
         ImageCapture imageCapture =

@@ -19,6 +19,7 @@ import androidx.lifecycle.LifecycleOwner;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -156,23 +157,16 @@ public class MainActivity extends AppCompatActivity implements CameraXConfig.Pro
                                 Uri mImageUri = Uri.fromFile(new File(file.getAbsolutePath()));
                                 Log.i("Hey","Image crossed");
                                 Log.i("Uri:",mImageUri.toString());
+
                                 if(mImageUri!=null)
                                 {
-                                    final StorageReference imageRef = mStorageRef.child(System.currentTimeMillis() + "." + getFileExtension(mImageUri));
-                                    UploadTask uploadTask = imageRef.putFile(mImageUri);
-                                    uploadTask.addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception exception) {
-                                           Log.i("Error: ","Failed");
-                                        }
-                                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                                            // ...
-                                            Log.i("Success: ","Success");
-                                        }
-                                    });
+
+                                    //go to chatImageActivity
+
+                                    Intent goToImageSend = new Intent(MainActivity.this, ChatImage.class);
+                                    goToImageSend.putExtra("mImageUri", mImageUri.toString());
+                                    startActivity(goToImageSend);
+
                                 }
                                 else{
                                     Log.i("ImageUri","is null"+mImageUri);
@@ -183,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements CameraXConfig.Pro
                             }
                             @Override
                             public void onError(ImageCaptureException error) {
-                                Log.i("Image ","Error");
+                                Log.i("Image ",error.getMessage());
                                 Log.i("Error",error.getMessage());
                             }
                         });

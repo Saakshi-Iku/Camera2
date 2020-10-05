@@ -1,6 +1,7 @@
 package com.example.camera2;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.camera2.Camera2Config;
 import androidx.camera.core.Camera;
@@ -36,8 +37,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -47,6 +50,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
@@ -88,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements CameraXConfig.Pro
                     // This should never be reached.
                 }
             }, ContextCompat.getMainExecutor(this));
+
+
+
 //
 //        else{
 //            Toast.makeText(this,"Permissions not granted",Toast.LENGTH_SHORT);
@@ -185,6 +192,38 @@ public class MainActivity extends AppCompatActivity implements CameraXConfig.Pro
 
         });
       }
+
+
+
+    public void listAllPaginated(@Nullable String pageToken) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference listRef = storage.getReference().child("files/uid");
+
+        // Fetch the next page of results, using the pageToken if we have one.
+        Task<ListResult> listPageTask;
+        listPageTask = pageToken != null
+                ? listRef.list(100, pageToken)
+                : listRef.list(100);
+
+        listPageTask
+                .addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                    @Override
+                    public void onSuccess(ListResult listResult) {
+                        List<StorageReference> prefixes = listResult.getPrefixes();
+                        List<StorageReference> items = listResult.getItems();
+
+                        if (listResult.getPageToken() != null) {
+                            listAllPaginated(listResult.getPageToken());
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Uh-oh, an error occurred.
+            }
+        });
+    }
+
     void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
         Preview preview = new Preview.Builder()
                 .build();

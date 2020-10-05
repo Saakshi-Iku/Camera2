@@ -196,8 +196,4 @@ public class ChatImage extends AppCompatActivity {
         return BitmapFactory.decodeStream(c.getContentResolver().openInputStream(uri), null, o2);
     }
 
-
-
-
-
 }

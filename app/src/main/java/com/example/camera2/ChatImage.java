@@ -19,6 +19,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+
+import android.content.pm.PackageManager;
+//import android.support.v4.app.ActivityCompat;
+//import android.support.v4.content.ContextCompat;
+//import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,6 +74,9 @@ public class ChatImage extends AppCompatActivity {
     private FirebaseUser user;
     private FirebaseFirestore db;
     private int STORAGE_PERMISSION_CODE=10;
+    private GpsTracker gpsTracker;
+    private double longitude;
+    private double latitude;
 
     private String TAG = ChatImage.class.getSimpleName();
 
@@ -131,9 +143,28 @@ public class ChatImage extends AppCompatActivity {
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                        // ...
+
                         Log.i("Success: ","Success");
+                        getLocation();
+                        Log.i("Latitude: ",String.valueOf(latitude));
+                        Log.i("Longitude: ",String.valueOf(longitude));
+                        Map<String, Object> docData = new HashMap<>();
+                        docData.put("latitude", latitude);
+                        docData.put("longitude", longitude);
+                        db.collection("latlong")
+                                .add(docData)
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        Log.i("Image: ","Latlong uploaded");
+                                        Toast.makeText(ChatImage.this, "Image info uploaded", Toast.LENGTH_LONG).show();
+
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.i("Image: ","Latlong upload failed");
+                                    Toast.makeText(ChatImage.this, e.toString(), Toast.LENGTH_LONG).show();
+                                });
                     }
                 });
             }
@@ -194,6 +225,16 @@ public class ChatImage extends AppCompatActivity {
         BitmapFactory.Options o2 = new BitmapFactory.Options();
         o2.inSampleSize = scale;
         return BitmapFactory.decodeStream(c.getContentResolver().openInputStream(uri), null, o2);
+    }
+
+    public void getLocation(){
+        gpsTracker = new GpsTracker(ChatImage.this);
+        if(gpsTracker.canGetLocation()){
+            latitude = gpsTracker.getLatitude();
+            longitude = gpsTracker.getLongitude();
+        }else{
+            gpsTracker.showSettingsAlert();
+        }
     }
 
 }

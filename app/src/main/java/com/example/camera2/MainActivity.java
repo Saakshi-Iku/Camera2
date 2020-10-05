@@ -33,6 +33,7 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements CameraXConfig.Pro
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private PreviewView previewView;
     private int REQUEST_CODE_PERMISSIONS = 1001;
-    private Button button;
+    private ImageButton button;
     private Uri mImageUri;
     private Uri mainImageUri;
     private StorageReference mStorageRef;
@@ -336,8 +337,18 @@ public class MainActivity extends AppCompatActivity implements CameraXConfig.Pro
         } catch (Exception e) {
             e.printStackTrace();
         }
+        try {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         return true;
     }
+
+
+
     public String getBatchDirectoryName() {
 
         String app_folder_path = "";

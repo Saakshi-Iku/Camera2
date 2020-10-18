@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements CameraXConfig.Pro
     private PreviewView previewView;
     private int REQUEST_CODE_PERMISSIONS = 1001;
     private ImageButton button;
+    private ImageButton buttonrecent;
     private Uri mImageUri;
     private Uri mainImageUri;
     private StorageReference mStorageRef;
@@ -81,6 +82,17 @@ public class MainActivity extends AppCompatActivity implements CameraXConfig.Pro
         setContentView(R.layout.activity_main);
         mStorageRef = FirebaseStorage.getInstance().getReference();
         button=findViewById(R.id.button);
+        buttonrecent=findViewById(R.id.recent);
+
+        buttonrecent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(MainActivity.this,ImageSelectActivity.class);
+                startActivity(intent);
+            }
+        });
+
         previewView=findViewById(R.id.previewView);
         boolean permissions=allPermissionsGranted();
             cameraProviderFuture = ProcessCameraProvider.getInstance(this);

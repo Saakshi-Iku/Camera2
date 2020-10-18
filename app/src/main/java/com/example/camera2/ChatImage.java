@@ -100,6 +100,7 @@ public class ChatImage extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         mImageUri = extras.getString("mImageUri");
+        Log.i("mImageUti in ChatImage",mImageUri);
 
         try {
             Picasso.get().load(String.valueOf(new URL(mImageUri))).into(image);
@@ -111,28 +112,28 @@ public class ChatImage extends AppCompatActivity {
         sendImageChatbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
-                //File file = new File(getBatchDirectoryName(), mDateFormat.format(new Date())+ ".jpg");
-                //File file = new File("data/data//test.jpg");
-
-                //file creation
-                String root = Environment.getExternalStorageDirectory().toString();
-                File myDir = new File(root + "/images");
-                myDir.mkdirs();
-                Random generator = new Random();
-                int n = 10000;
-                n = generator.nextInt(n);
-                String fname = "Image-"+ n +".jpg";
-                File file = new File (myDir, fname);
-                if (file.exists ())
-                    file.delete ();
-                if (!file.exists()) {
-                    try {
-                        file.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+//                SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
+//                //File file = new File(getBatchDirectoryName(), mDateFormat.format(new Date())+ ".jpg");
+//                //File file = new File("data/data//test.jpg");
+//
+//                //file creation
+//                String root = Environment.getExternalStorageDirectory().toString();
+//                File myDir = new File(root + "/images");
+//                myDir.mkdirs();
+//                Random generator = new Random();
+//                int n = 10000;
+//                n = generator.nextInt(n);
+//                String fname = "Image-"+ n +".jpg";
+//                File file = new File (myDir, fname);
+//                if (file.exists ())
+//                    file.delete ();
+//                if (!file.exists()) {
+//                    try {
+//                        file.createNewFile();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
                 final StorageReference imageRef = mStorageRef.child(System.currentTimeMillis() + "." + getFileExtension(Uri.parse(mImageUri)));
                 UploadTask uploadTask = imageRef.putFile(Uri.parse(mImageUri));
                 uploadTask.addOnFailureListener(new OnFailureListener() {
